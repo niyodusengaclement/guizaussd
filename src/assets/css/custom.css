@@ -1,0 +1,14 @@
+.col-states {
+  max-height: 76%;
+  min-width: 40%;
+  margin-right: 10px;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.col-states-lg {
+  position: fixed;
+  width: 35%;
+  overflow-y: auto;
+  max-height: 76%;
+}
