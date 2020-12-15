@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Menus from "../components/Menus";
+import Menus from "../components/Menus/";
 import NavBar from "../components/Navbar";
 import authToken from "../utils/authToken";
 

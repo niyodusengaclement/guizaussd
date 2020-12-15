@@ -1,102 +1,98 @@
 import {
-  GET_MENUS_SUCCESS,
-  GET_MENUS_ERROR,
-  GET_MENUS_START,
-  CREATE_MENU_START,
-  CREATE_MENU_SUCCESS,
-  CREATE_MENU_ERROR,
-  DELETE_MENU_SUCCESS,
-  UPDATE_MENU_SUCCESS,
+  GET_CHOICES_SUCCESS,
+  GET_CHOICES_ERROR,
+  GET_CHOICES_START,
+  CREATE_CHOICE_START,
+  CREATE_CHOICE_ERROR,
+  DELETE_CHOICE_SUCCESS,
+  CREATE_CHOICE_SUCCESS,
+  GET_ONE_CHOICE_SUCCESS,
+  UPDATE_CHOICE_SUCCESS,
 } from "../actions";
 
 const initialState = {
   isLoading: false,
-  btnLoading: false,
   isLoaded: false,
   dragable: true,
-  values: { rows: [] },
+  choice: {},
+  values: [],
   error: null,
 };
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
-    case GET_MENUS_START:
+    case GET_CHOICES_START:
       return {
         ...state,
         isLoading: true,
         dragable: false,
       };
-    case GET_MENUS_SUCCESS:
+    case GET_CHOICES_SUCCESS:
       return {
         ...state,
         isLoading: false,
         isLoaded: true,
         dragable: true,
-        btnLoading: false,
         values: payload,
       };
-    case GET_MENUS_ERROR:
+    case GET_ONE_CHOICE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isLoaded: true,
+        dragable: true,
+        choice: payload,
+      };
+    case GET_CHOICES_ERROR:
       return {
         ...state,
         isLoading: false,
         isLoaded: false,
-        btnLoading: false,
         dragable: true,
         error: payload,
       };
-    case CREATE_MENU_START:
+    case CREATE_CHOICE_START:
       return {
         ...state,
+        isLoading: true,
         dragable: false,
-        btnLoading: true,
       };
-    case CREATE_MENU_SUCCESS:
+    case CREATE_CHOICE_SUCCESS:
       return {
         ...state,
         isLoading: false,
-        btnLoading: false,
         isLoaded: true,
         dragable: true,
-        values: {
-          rows: [...state.values.rows, payload],
-        },
+        values: [...state.values, payload],
       };
-    case CREATE_MENU_ERROR:
+    case UPDATE_CHOICE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isLoaded: true,
+        dragable: true,
+        values: state.values.map((value) =>
+          value.record_id !== payload.record_id ? value : payload
+        ),
+      };
+    case CREATE_CHOICE_ERROR:
       return {
         ...state,
         isLoading: false,
         isLoaded: false,
         dragable: true,
-        btnLoading: false,
         error: payload,
       };
-
-    case UPDATE_MENU_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        isLoaded: true,
-        dragable: true,
-        btnLoading: false,
-        values: {
-          rows: state.values.rows.map((value) =>
-            value.state_id !== payload.state_id ? value : payload
-          ),
-        },
-      };
-    case DELETE_MENU_SUCCESS:
-      const rows = state.values.rows.filter(
-        ({ state_id }) => state_id !== payload
+    case DELETE_CHOICE_SUCCESS:
+      const values = state.values.filter(
+        ({ record_id }) => record_id !== payload
       );
       return {
         ...state,
         isLoading: false,
         isLoaded: true,
-        btnLoading: false,
         dragable: true,
-        values: {
-          rows,
-        },
+        values,
       };
     default:
       return state;

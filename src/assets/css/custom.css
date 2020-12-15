@@ -4,7 +4,7 @@
   margin-right: 10px;
   position: fixed;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 .col-states-lg {
   position: fixed;

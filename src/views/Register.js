@@ -2,9 +2,7 @@ import React from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const Register = (props) => {
-  console.log(props);
-
+const Register = () => {
   return (
     <Row>
       <Col></Col>
