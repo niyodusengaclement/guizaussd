@@ -32,7 +32,9 @@ const ChildForm = (props) => {
   const save = (e) => {
     e.preventDefault();
     const data = {
-      ussd_state: props.parentState.state_id.toString(),
+      ussd_state: !props.parentState.state_id
+        ? props.parentState.ussd_new_state
+        : props.parentState.state_id.toString(),
       ussd_choice,
       ussd_name,
       choiceStatus,

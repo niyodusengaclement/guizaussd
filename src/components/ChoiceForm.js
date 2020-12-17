@@ -1,34 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Spinner } from "react-bootstrap";
 import { connect } from "react-redux";
-import { createChoice } from "../redux/actions/menusActions";
+import { createChoice, updateChoice } from "../redux/actions/choicesActions";
 
 const ChoiceForm = (props) => {
   const [ussd_choice, setChoice] = useState("");
   const [ussd_name, setName] = useState("");
   const [ussd_new_state, setNewState] = useState("");
   const [status, setStatus] = useState("");
+  const [ussd_state, setussd_state] = useState("");
   const [lastupdated] = useState(new Date());
-  const { isLoading } = props.menus;
+  const {
+    choices: { isLoading },
+    details,
+    editChoice,
+  } = props;
+
+  useEffect(() => {
+    if (!editChoice) {
+      setussd_state("");
+      setChoice("");
+      setName("");
+      setNewState("");
+      setStatus("");
+      return setussd_state(props.ussd_state.toString());
+    }
+    setussd_state(details.ussd_state);
+    setChoice(details.ussd_choice);
+    setName(details.ussd_name);
+    setNewState(details.ussd_new_state);
+    setStatus(details.status);
+  }, [details]);
 
   const save = (e) => {
     e.preventDefault();
     const data = {
-      ussd_state: props.ussd_state.toString(),
+      ussd_state,
       ussd_choice,
       ussd_name,
       ussd_new_state,
       status,
       lastupdated,
     };
-    props.createChoice(data);
+    if (!editChoice) {
+      return props.createChoice(data);
+    }
+    props.updateChoice(data, details.record_id);
   };
-
+  const menus = props.menus.values.rows;
   return (
     <>
       <Form onSubmit={save}>
-
-        
         <Form.Group>
           <Form.Label>USSD Choice</Form.Label>
           <Form.Control
@@ -54,12 +76,21 @@ const ChoiceForm = (props) => {
         <Form.Group>
           <Form.Label>New State</Form.Label>
           <Form.Control
-            type="number"
-            className="form-control"
+            as="select"
+            size="md"
             value={ussd_new_state}
             onChange={(e) => setNewState(e.target.value)}
             placeholder="Enter new state number"
-          />
+          >
+            <option>Select the next state</option>
+            {menus.length > 0
+              ? menus.map((menu) => (
+                  <option key={menu.state_id} value={menu.state_id}>
+                    {menu.state_title}
+                  </option>
+                ))
+              : null}
+          </Form.Control>
         </Form.Group>
         <Form.Group>
           <Form.Label>Status</Form.Label>
@@ -77,7 +108,7 @@ const ChoiceForm = (props) => {
         </Form.Group>
 
         <Button type="submit" className="btn btn-dark btn-block">
-          Add a new Choice
+          {!editChoice ? "Add a new Choice" : "Save changes"}
           {isLoading && <Spinner animation="border" />}
           {!isLoading && ""}
         </Button>
@@ -85,7 +116,8 @@ const ChoiceForm = (props) => {
     </>
   );
 };
-const mapState = ({ menus }) => ({
+const mapState = ({ menus, choices }) => ({
   menus,
+  choices,
 });
-export default connect(mapState, { createChoice })(ChoiceForm);
+export default connect(mapState, { createChoice, updateChoice })(ChoiceForm);

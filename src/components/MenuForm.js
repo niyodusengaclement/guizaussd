@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button, Spinner } from "react-bootstrap";
 import { connect } from "react-redux";
-import { createMenu } from "../redux/actions/menusActions";
+import { createMenu, updateMenu } from "../redux/actions/menusActions";
 
 const MenuForm = (props) => {
   const [state_type, setstate_type] = useState("");
@@ -23,7 +23,35 @@ const MenuForm = (props) => {
   const [default_resp_code, setdefault_resp_code] = useState("");
   const [referenced_fields, setreferenced_fields] = useState("");
   const [status, setstatus] = useState("");
-  const { isLoading } = props.menus;
+  const {
+    menus: { btnLoading },
+    details,
+    editMenu,
+  } = props;
+
+  useEffect(() => {
+    if (editMenu) {
+      setstate_type(details.state_type);
+      setstate_title(details.state_title);
+      setstate_indicator(details.state_indicator);
+      setinput_type(details.input_type);
+      setinput_field_name(details.input_field_name);
+      settext_en(details.text_en);
+      settext_fr(details.text_fr);
+      settext_kin(details.text_kin);
+      setfxn_call_flag(details.fxn_call_flag);
+      setcall_fxn_name(details.call_fxn_name);
+      setapi_call_flag(details.api_call_flag);
+      setapi_endpoint(details.api_endpoint);
+      setrequest_method(details.request_method);
+      setrequest_params(details.request_params);
+      setcode(details.code);
+      setfxn_type(details.fxn_type);
+      setdefault_resp_code(details.default_resp_code);
+      setreferenced_fields(details.referenced_fields);
+      setstatus(details.status);
+    }
+  }, [details]);
 
   const save = (e) => {
     e.preventDefault();
@@ -48,7 +76,11 @@ const MenuForm = (props) => {
       referenced_fields,
       status,
     };
-    props.createMenu(data);
+
+    if (!editMenu) {
+      return props.createMenu(data);
+    }
+    props.updateMenu(data, details.state_id);
   };
   return (
     <>
@@ -69,6 +101,7 @@ const MenuForm = (props) => {
           <Form.Control
             as="select"
             size="md"
+            value={state_indicator}
             onChange={(e) => setstate_indicator(e.target.value)}
             defaultValue={state_indicator}
           >
@@ -136,6 +169,7 @@ const MenuForm = (props) => {
             size="md"
             onChange={(e) => setfxn_type(e.target.value)}
             defaultValue={fxn_type}
+            value={fxn_type}
           >
             <option value="">Select FXN type</option>
             <option value="api_triggering">API triggering</option>
@@ -172,6 +206,7 @@ const MenuForm = (props) => {
           <Form.Control
             as="select"
             size="md"
+            value={status}
             onChange={(e) => setstatus(e.target.value)}
             defaultValue={status}
           >
@@ -189,6 +224,7 @@ const MenuForm = (props) => {
             size="md"
             onChange={(e) => setstate_type(e.target.value)}
             defaultValue={state_type}
+            value={state_type}
           >
             <option value="">Select State type</option>
             <option value="input">Input</option>
@@ -253,6 +289,7 @@ const MenuForm = (props) => {
             size="md"
             onChange={(e) => setrequest_method(e.target.value)}
             defaultValue={request_method}
+            value={request_method}
           >
             <option value="">Select request method</option>
             <option value="GET">GET</option>
@@ -268,6 +305,7 @@ const MenuForm = (props) => {
             size="md"
             onChange={(e) => setinput_type(e.target.value)}
             defaultValue={input_type}
+            value={input_type}
           >
             <option value="">Select input type</option>
             <option value="alphabetic">Alphabetic</option>
@@ -277,9 +315,9 @@ const MenuForm = (props) => {
         </Form.Group>
 
         <Button type="submit" className="btn btn-dark btn-block">
-          Add a new State
-          {isLoading && <Spinner animation="border" />}
-          {!isLoading && ""}
+          {!editMenu ? "Add a new State" : "Save changes"}
+          {btnLoading && <Spinner animation="border" />}
+          {!btnLoading && ""}
         </Button>
       </Form>
     </>
@@ -289,4 +327,4 @@ const MenuForm = (props) => {
 const mapState = ({ menus }) => ({
   menus,
 });
-export default connect(mapState, { createMenu })(MenuForm);
+export default connect(mapState, { createMenu, updateMenu })(MenuForm);
