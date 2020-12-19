@@ -23,9 +23,9 @@ const ChoiceDetails = (props) => {
   useEffect(() => {
     props.findOneChoice({ record_id: details.record_id });
   }, [details]);
-
+  console.log("dedetails", details);
   return (
-    <Row className="mt-5 ml-3">
+    <Row className="ml-3">
       <Col>
         <div className="col-states-lg">
           {isLoading && <Spinner animation="border" />}

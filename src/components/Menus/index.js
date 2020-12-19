@@ -46,9 +46,21 @@ const Menus = (props) => {
     props.findAll();
   }, []);
 
+  const findNextState = (val) => {
+    const state =
+      values && values.rows && values.rows.length > 0
+        ? values.rows.find(({ state_id }) => state_id == val.ussd_new_state)
+        : null;
+    return state;
+  };
+
   const handleShowDetails = (data) => {
     setView("");
-    setDetails(data);
+    if (!data.ussd_new_state) {
+      return setDetails(data);
+    }
+    const state = findNextState(data);
+    return setDetails(state);
   };
 
   const handleAddChoice = (data) => {
@@ -69,20 +81,25 @@ const Menus = (props) => {
   };
 
   const handleEdit = (data) => {
-    setDetails(data);
     if (!data.state_id) {
-      setEditChoice(true);
-      return setView("choice_form");
+      const state = findNextState(data);
+      setDetails(state);
+      setEditMenu(true);
+      return setView("menu_form");
     }
     setEditMenu(true);
+    setDetails(data);
     setView("menu_form");
   };
 
   const deleteMenu = (data) => {
     const confirmed = window.confirm("Are you sure you want to delete?");
+    console.log(data);
     if (confirmed) {
       if (!data.state_id) {
+        const state = findNextState(data);
         return props.deleteChoice(data.record_id);
+        // return props.deleteMenu(data.state_id);
       }
       props.deleteMenu(data.state_id);
     }
@@ -90,65 +107,63 @@ const Menus = (props) => {
 
   const handleChange = (data) => {
     const changes = findDifference(defaultTreeData, data);
-    // console.log("Changes", changes);
+    console.log("Changes", changes);
     // props.updateMenuOnDrop({ changes });
     setTreeData(data);
   };
 
-  const titleDiv = (val) => (
-    <div>
-      {val.state_title}
-      {val.state_id && (
-        <Link to="#" onClick={() => handleAddChoice(val)} className="pl-2">
-          <OverlayTrigger
-            overlay={<Tooltip id="tooltip-disabled">Add choice </Tooltip>}
-          >
-            <span className="d-inline-block">
-              <FontAwesomeIcon icon={faPlus} />
+  const titleDiv = (val) => {
+    const new_title = !val.ussd_new_state
+      ? ""
+      : findNextState(val) && findNextState(val).state_title
+      ? findNextState(val).state_title
+      : "";
+    return (
+      <div>
+        <small>
+          {!val.ussd_new_state ? val.state_title : new_title}
+          <Link to="#" onClick={() => handleAddChild(val)} className="pl-1">
+            <OverlayTrigger
+              overlay={<Tooltip id="tooltip-disabled">Add child </Tooltip>}
+            >
+              <span className="d-inline-block">
+                <FontAwesomeIcon icon={faPlusCircle} />
+              </span>
+            </OverlayTrigger>
+          </Link>
+          <Link to="#" onClick={() => handleEdit(val)} className="pl-1">
+            <OverlayTrigger
+              overlay={<Tooltip id="tooltip-disabled">Edit </Tooltip>}
+            >
+              <span className="d-inline-block">
+                <FontAwesomeIcon icon={faEdit} />
+              </span>
+            </OverlayTrigger>
+          </Link>
+          <Link to="#" onClick={() => handleShowDetails(val)} className="pl-1">
+            <OverlayTrigger
+              overlay={<Tooltip id="tooltip-disabled">view Details </Tooltip>}
+            >
+              <span className="d-inline-block">
+                <FontAwesomeIcon icon={faEye} />
+              </span>
+            </OverlayTrigger>
+          </Link>
+          <Link to="#" onClick={() => deleteMenu(val)} className="pl-1">
+            <span className="text-danger">
+              <OverlayTrigger
+                overlay={<Tooltip id="tooltip-disabled">Delete </Tooltip>}
+              >
+                <span className="d-inline-block">
+                  <FontAwesomeIcon icon={faTrash} />
+                </span>
+              </OverlayTrigger>
             </span>
-          </OverlayTrigger>
-        </Link>
-      )}
-      <Link to="#" onClick={() => handleAddChild(val)} className="pl-1">
-        <OverlayTrigger
-          overlay={<Tooltip id="tooltip-disabled">Add child </Tooltip>}
-        >
-          <span className="d-inline-block">
-            <FontAwesomeIcon icon={faPlusCircle} />
-          </span>
-        </OverlayTrigger>
-      </Link>
-      <Link to="#" onClick={() => handleEdit(val)} className="pl-1">
-        <OverlayTrigger
-          overlay={<Tooltip id="tooltip-disabled">Edit </Tooltip>}
-        >
-          <span className="d-inline-block">
-            <FontAwesomeIcon icon={faEdit} />
-          </span>
-        </OverlayTrigger>
-      </Link>
-      <Link to="#" onClick={() => handleShowDetails(val)} className="pl-1">
-        <OverlayTrigger
-          overlay={<Tooltip id="tooltip-disabled">view Details </Tooltip>}
-        >
-          <span className="d-inline-block">
-            <FontAwesomeIcon icon={faEye} />
-          </span>
-        </OverlayTrigger>
-      </Link>
-      <Link to="#" onClick={() => deleteMenu(val)} className="pl-1">
-        <span className="text-danger">
-          <OverlayTrigger
-            overlay={<Tooltip id="tooltip-disabled">Delete </Tooltip>}
-          >
-            <span className="d-inline-block">
-              <FontAwesomeIcon icon={faTrash} />
-            </span>
-          </OverlayTrigger>
-        </span>
-      </Link>
-    </div>
-  );
+          </Link>
+        </small>
+      </div>
+    );
+  };
 
   const loopOverChoices = (curr_state) => findChildren(curr_state);
   const findChildren = (curr_state) => {
@@ -174,32 +189,43 @@ const Menus = (props) => {
   useEffect(() => {
     const rows =
       values && values.rows && values.rows.length > 0
-        ? values.rows.map((val) => {
-            const treeInfo = {
-              state_id: val.state_id,
-              expanded: true,
-              title: titleDiv(val),
-              children:
-                val.choices && val.choices.length > 0
-                  ? val.choices.map((choice) => {
-                      choice.state_title = choice.ussd_name;
-                      const obj = {
-                        record_id: choice.record_id,
-                        title: titleDiv(choice),
-                        ussd_new_state: choice.ussd_new_state,
-                        expanded: true,
-                        children: findChildren(choice),
-                      };
-                      return obj;
-                    })
-                  : [],
-            };
-            return treeInfo;
-          })
+        ? values.rows
+            .filter((row) => row.state_id === 2)
+            .map((val) => {
+              const treeInfo = {
+                state_id: val.state_id,
+                expanded: true,
+                title: titleDiv(val),
+                children:
+                  val.choices && val.choices.length > 0
+                    ? val.choices.map((choice) => {
+                        choice.state_title = choice.ussd_name;
+                        const obj = {
+                          record_id: choice.record_id,
+                          title: titleDiv(choice),
+                          ussd_new_state: choice.ussd_new_state,
+                          expanded: true,
+                          children: findChildren(choice),
+                        };
+                        return obj;
+                      })
+                    : [],
+              };
+              return treeInfo;
+            })
         : [];
     setTreeData(rows);
     setDeafultTreeData(rows);
   }, [values.rows]);
+
+  const onDragStateChanged = (g) => {
+    // ({ isDragging: bool, draggedNode: object })
+    console.log("on drag", g);
+  };
+  const onmoveNode = (g) => {
+    // ({ isDragging: bool, draggedNode: object })
+    console.log("onmoveNode", g);
+  };
 
   return (
     <Row className="mt-5 ml-3">
@@ -207,27 +233,18 @@ const Menus = (props) => {
         <Card className="col-states">
           <Card.Header>
             Menus
-            <div className="float-right">
-              <Link to="#" onClick={handleAddMenu}>
-                <OverlayTrigger
-                  overlay={<Tooltip id="tooltip-disabled">Add menu </Tooltip>}
-                >
-                  <span className="d-inline-block">
-                    <FontAwesomeIcon icon={faPlusCircle} />
-                  </span>
-                </OverlayTrigger>
-              </Link>
-            </div>
           </Card.Header>
           <Card.Body>
             {isLoading && <Spinner animation="border" />}
             {!isLoading && (
-              <div style={{ height: 800 }}>
+              <div style={{ height: 500 }}>
                 <SortableTree
                   treeData={treeData}
                   isVirtualized={false}
-                  // canDrag={dragable}
-                  canDrag={false}
+                  canDrag={dragable}
+                  onDragStateChanged={onDragStateChanged}
+                  onMoveNode={onmoveNode}
+                  // canDrag={false}
                   onChange={(treeData) => handleChange(treeData)}
                 />
               </div>
@@ -239,9 +256,6 @@ const Menus = (props) => {
       {!details && !view && ""}
       {details && details.state_id && !view && (
         <MenuDetails details={details} />
-      )}
-      {details && details.record_id && !view && (
-        <ChoiceDetails details={details} />
       )}
 
       {view === "choice_form" && (
