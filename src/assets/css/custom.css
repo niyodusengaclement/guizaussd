@@ -1,0 +1,35 @@
+.col-states {
+  max-height: 76%;
+  min-width: 30%;
+  /* margin-right: 10px; */
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+.col-states-lg {
+  position: fixed;
+  width: 64%;
+  margin-left: -9%;
+  overflow-y: auto;
+  max-height: 76%;
+}
+
+.close-icon :hover {
+  color: rgb(175, 13, 13);
+  cursor: pointer;
+}
+.hover-icon :hover {
+  cursor: pointer;
+}
+@media (max-width: 767px) {
+  .col-states {
+    width: 85%;
+  }
+  .col-states-lg {
+    width: 85%;
+    margin-left: 0%;
+  }
+  .hide-sm {
+    display: none;
+  }
+}
