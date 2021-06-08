@@ -8,7 +8,7 @@ import {
   CREATE_CHOICE_SUCCESS,
   GET_ONE_CHOICE_SUCCESS,
   UPDATE_CHOICE_SUCCESS,
-} from "../actions";
+} from "../types";
 
 const initialState = {
   isLoading: false,

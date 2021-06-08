@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  ListGroup,
-  Form,
-  Col,
-  Row,
-} from "react-bootstrap";
+import { ListGroup, Form, Col, Row } from "react-bootstrap";
 import { findAll, deleteMenu } from "../../redux/actions/menusActions";
 import {
   findAll as findAllChoices,
@@ -21,9 +16,7 @@ const MenuDetails = (props) => {
       <p>{details.text_fr}</p>
       <p>{details.text_kin}</p>
       <Form.Group as={Row}>
-        <Form.Label column sm="3">
-          State Type:
-        </Form.Label>
+        <Form.Label column>State Type:</Form.Label>
         <Col sm="9">
           <Form.Control plaintext readOnly defaultValue={details.state_type} />
         </Col>
