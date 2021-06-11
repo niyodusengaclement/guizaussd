@@ -1,29 +1,15 @@
 import React from "react";
-import {
-  ListGroup,
-  Form,
-  Col,
-  Row,
-} from "react-bootstrap";
-import { findAll, deleteMenu } from "../../redux/actions/menusActions";
-import {
-  findAll as findAllChoices,
-  updateMenuOnDrop,
-} from "../../redux/actions/choicesActions";
-import { connect } from "react-redux";
+import { ListGroup, Form, Col, Row } from "react-bootstrap";
 import "react-sortable-tree/style.css";
 
-const MenuDetails = (props) => {
-  const { details } = props;
+const MenuDetails = ({ details }) => {
   return (
     <small>
       <p>{details.text_en}</p>
       <p>{details.text_fr}</p>
       <p>{details.text_kin}</p>
       <Form.Group as={Row}>
-        <Form.Label column sm="3">
-          State Type:
-        </Form.Label>
+        <Form.Label column>State Type:</Form.Label>
         <Col sm="9">
           <Form.Control plaintext readOnly defaultValue={details.state_type} />
         </Col>
@@ -124,13 +110,5 @@ const MenuDetails = (props) => {
     </small>
   );
 };
-const mapState = ({ menus, choices }) => ({
-  menus,
-  choices,
-});
-export default connect(mapState, {
-  findAll,
-  findAllChoices,
-  deleteMenu,
-  updateMenuOnDrop,
-})(MenuDetails);
+
+export default MenuDetails;

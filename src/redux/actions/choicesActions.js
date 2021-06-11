@@ -11,7 +11,7 @@ import {
   GET_ONE_CHOICE_SUCCESS,
   DELETE_CHOICE_SUCCESS,
   UPDATE_CHOICE_SUCCESS,
-} from ".";
+} from "../types";
 
 export const findAll = () => async (dispatch) => {
   try {
@@ -56,7 +56,10 @@ export const createChoice = (data) => async (dispatch) => {
 export const updateMenuOnDrop = (data, ussd_new_state) => async (dispatch) => {
   try {
     // if (data.changes.length <= 1) return;
-    const response = await HttpRequest.patch(`/choices/drop/${ussd_new_state}`, data);
+    const response = await HttpRequest.patch(
+      `/choices/drop/${ussd_new_state}`,
+      data
+    );
     toast.success(response.message);
     dispatch(creator(CREATE_CHOICE_SUCCESS, response.data));
   } catch (e) {

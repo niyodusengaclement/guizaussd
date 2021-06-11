@@ -5,7 +5,7 @@ import {
   LOGIN_START,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
-} from "../actions";
+} from "../types";
 
 const initialState = {
   isLoading: false,

@@ -28,9 +28,11 @@ import "react-sortable-tree/style.css";
 import SortableTree from "react-sortable-tree";
 import MenuDetails from "./MenuDetails";
 import FileExplorerTheme from "react-sortable-tree-theme-file-explorer";
+import { useParams } from "react-router-dom";
 
 const Menus = (props) => {
   const { isLoading, values, dragable } = props.menus;
+  const { app_id } = useParams();
   const [details, setDetails] = useState();
   const [view, setView] = useState("");
   const [treeData, setTreeData] = useState([]);
@@ -38,7 +40,7 @@ const Menus = (props) => {
 
   useEffect(() => {
     props.findAllChoices();
-    props.findAll();
+    props.findAll(app_id);
   }, []);
 
   const findNextState = (val) => {
@@ -181,14 +183,14 @@ const Menus = (props) => {
   };
 
   return (
-    <Row className="mt-5 ml-3 mr-3">
+    <Row className="">
       <Col lg={5} md={5} sm={12} xs={12}>
-        <Card className="col-states">
+        <Card>
           <Card.Header>Menus</Card.Header>
           <Card.Body>
             {isLoading && <Spinner animation="border" />}
             {!isLoading && (
-              <div style={{ minHeight: 500 }}>
+              <div style={{ minHeight: 500, fontSize: "20px" }}>
                 <SortableTree
                   treeData={treeData}
                   isVirtualized={false}
@@ -206,7 +208,7 @@ const Menus = (props) => {
       {!details && !view && ""}
       {details && details.state_id && !view && (
         <Col>
-          <div className="col-states-lg">
+          <div>
             <Card>
               <Card.Header>
                 {details.state_title}{" "}
@@ -260,7 +262,7 @@ const Menus = (props) => {
       {!details && !view && ""}
       {view === "menu_form" && (
         <Col>
-          <div className="col-states-lg">
+          <div>
             <Card>
               <Card.Header>
                 {!editMenu ? "Add Menu" : "Edit menu"}
@@ -300,7 +302,7 @@ const Menus = (props) => {
       {!details && !view && ""}
       {view === "child_form" && (
         <Col>
-          <div className="col-states-lg">
+          <div>
             <Card>
               <Card.Header>
                 Add Menu Child
