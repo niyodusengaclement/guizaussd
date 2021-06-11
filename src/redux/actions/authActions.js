@@ -5,8 +5,10 @@ import {
   CREATE_ACCOUNT_START,
   CREATE_ACCOUNT_SUCCESS,
   CREATE_ACCOUNT_ERROR,
-  LOGIN_START, LOGIN_SUCCESS, LOGIN_ERROR
-} from ".";
+  LOGIN_START,
+  LOGIN_SUCCESS,
+  LOGIN_ERROR,
+} from "../types";
 import AuthToken from "../../utils/authToken";
 
 export const createAccount = (data) => async (dispatch) => {
@@ -29,7 +31,7 @@ export const login = (data) => async (dispatch) => {
     const res = await HttpRequest.post("/auth/login", data);
     AuthToken.setToken(res.data);
     dispatch(creator(LOGIN_SUCCESS, res.data));
-    window.location.assign("/admin");
+    window.location.assign("/dashboard");
   } catch (e) {
     if (e.response && e.response.data) {
       dispatch(creator(LOGIN_ERROR, e.response.data.error));

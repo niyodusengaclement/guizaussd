@@ -7,7 +7,7 @@ import {
   CREATE_MENU_ERROR,
   DELETE_MENU_SUCCESS,
   UPDATE_MENU_SUCCESS,
-} from "../actions";
+} from "../types";
 
 const initialState = {
   isLoading: false,

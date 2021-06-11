@@ -4,8 +4,8 @@ import authToken from "../utils/authToken";
 const token = authToken.getToken();
 
 export const instance = axios.create({
-  baseURL: "https://guiza-api.herokuapp.com/api",
-  // baseURL: 'http://localhost:5000/api',
+  // baseURL: "https://guiza-api.herokuapp.com/api",
+  baseURL: "http://localhost:5000/api",
   responseType: "json",
   headers: {
     "x-auth-token": token,
