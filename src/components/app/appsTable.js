@@ -5,9 +5,10 @@ import { Table, Badge, Button, Input, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import * as types from "../../redux/types";
 import { sharedAction } from "../../redux/actions/sharedAction";
-import NewApp from "../form/app";
+import NewApp from "./newApp";
 
 const AppsTable = () => {
   const dispatch = useDispatch();
@@ -70,6 +71,9 @@ const AppsTable = () => {
       dataIndex: "app_name",
       key: "app_name",
       ...getColumnSearchProps(),
+      render: (text, record) => (
+        <Link to={"/apps/" + record.app_id}>{text}</Link>
+      ),
     },
     {
       title: "USSD Code",
@@ -105,6 +109,7 @@ const AppsTable = () => {
       dataIndex: "external_routing",
       key: "external_routing",
       responsive: ["xl"],
+      render: (text) => (+text === 1 ? "true" : "false"),
     },
     {
       title: "Routing URL",
@@ -151,6 +156,7 @@ const AppsTable = () => {
       loading={response?.isLoading}
       columns={columns}
       dataSource={dataSource}
+      rowKey="app_id"
     />
   );
 };

@@ -1,17 +1,7 @@
-import { useEffect, useState } from "react";
-import {
-  Drawer,
-  Form,
-  Button,
-  Col,
-  Row,
-  Input,
-  Select,
-  Switch,
-  message,
-} from "antd";
+import { useState } from "react";
+import { Drawer, Form, Button, Col, Row, Input, Select, Switch } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { sharedAction } from "../../redux/actions/sharedAction";
 import * as types from "../../redux/types";
 
@@ -22,17 +12,9 @@ const NewApp = () => {
   const [externalRouting, setExternalRouting] = useState(false);
 
   const dispatch = useDispatch();
-  const response = useSelector((state) => state?.app?.newApp);
-  const responseData = response?.data;
-
   const showDrawer = () => setVisible(true);
 
   const onClose = () => setVisible(false);
-
-  // useEffect(() => {
-  //   if (responseData?.error) return message.error(responseData?.error);
-  //   if (responseData?.data) return message.success(responseData?.error);
-  // }, [responseData]);
 
   const onFinish = (values) => {
     dispatch(sharedAction("post", "/apps", types.CREATE_NEW_APP, values));
@@ -89,7 +71,7 @@ const NewApp = () => {
             <Col span={12}>
               <Form.Item
                 name="app_ussd_code"
-                label="USD Code"
+                label="USSD Code"
                 rules={[
                   {
                     pattern: /^[*0-9]+$/,
@@ -138,7 +120,10 @@ const NewApp = () => {
                 name="request_format"
                 label="Request Format"
                 rules={[
-                  { required: true, message: "Please choose the Format" },
+                  {
+                    required: externalRouting,
+                    message: "Please choose the Format",
+                  },
                 ]}
               >
                 <Select placeholder="Please choose the Format">

@@ -28,9 +28,11 @@ import "react-sortable-tree/style.css";
 import SortableTree from "react-sortable-tree";
 import MenuDetails from "./MenuDetails";
 import FileExplorerTheme from "react-sortable-tree-theme-file-explorer";
+import { useParams } from "react-router-dom";
 
 const Menus = (props) => {
   const { isLoading, values, dragable } = props.menus;
+  const { app_id } = useParams();
   const [details, setDetails] = useState();
   const [view, setView] = useState("");
   const [treeData, setTreeData] = useState([]);
@@ -38,7 +40,7 @@ const Menus = (props) => {
 
   useEffect(() => {
     props.findAllChoices();
-    props.findAll();
+    props.findAll(app_id);
   }, []);
 
   const findNextState = (val) => {
