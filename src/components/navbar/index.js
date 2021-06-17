@@ -20,9 +20,6 @@ const Navbar = () => {
         <Menu.Item onClick={() => history.push("/apps")} key="/apps">
           Apps
         </Menu.Item>
-        <Menu.Item onClick={() => history.push("/menus")} key="/menus">
-          Menus
-        </Menu.Item>
       </Menu>
     </Header>
   );

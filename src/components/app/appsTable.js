@@ -102,7 +102,7 @@ const AppsTable = () => {
       title: "Email",
       dataIndex: "email_address",
       key: "email_address",
-      responsive: ["lg"],
+      responsive: ["xl"],
     },
     {
       title: "External Routing",

@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { message } from "antd";
 import HttpRequest from "../../services/HttpRequest";
 import creator from "./creator";
 import {
@@ -15,12 +15,12 @@ export const createAccount = (data) => async (dispatch) => {
   try {
     dispatch(creator(CREATE_ACCOUNT_START, true));
     const res = await HttpRequest.post("/auth/register", data);
-    toast.success(res.message);
+    message.success(res.message);
     dispatch(creator(CREATE_ACCOUNT_SUCCESS, res.data));
   } catch (e) {
     if (e.response && e.response.data) {
       dispatch(creator(CREATE_ACCOUNT_ERROR, e.response.data.error));
-      return toast.error(e.response.data.error);
+      return message.error(e.response.data.error);
     }
   }
 };
@@ -35,7 +35,7 @@ export const login = (data) => async (dispatch) => {
   } catch (e) {
     if (e.response && e.response.data) {
       dispatch(creator(LOGIN_ERROR, e.response.data.error));
-      return toast.error(e.response.data.error);
+      return message.error(e.response.data.error);
     }
   }
 };
@@ -43,7 +43,7 @@ export const login = (data) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     await HttpRequest.get("/auth/logout");
-    toast.success("You are successfully logged out");
+    message.success("You are successfully logged out");
     window.location.assign("/auth/login");
   } catch (e) {
     if (e.response && e.response.data) {
