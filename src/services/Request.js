@@ -3,9 +3,13 @@ import authToken from "../utils/authToken";
 
 const token = authToken.getToken();
 
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_PROD_BASE_URL
+    : process.env.REACT_APP_DEV_BASE_URL;
+
 export const instance = axios.create({
-  // baseURL: "https://guiza-api.herokuapp.com/api",
-  baseURL: "http://localhost:5000/api",
+  baseURL,
   responseType: "json",
   headers: {
     "x-auth-token": token,

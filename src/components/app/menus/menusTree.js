@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col } from "antd";
+import { Button, Card, Col, Empty } from "antd";
+import { PlusOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { findAll } from "../../../redux/actions/menusActions";
 import {
   findAll as findAllChoices,
@@ -10,7 +11,8 @@ import "react-sortable-tree/style.css";
 import SortableTree from "react-sortable-tree";
 import FileExplorerTheme from "react-sortable-tree-theme-file-explorer";
 import { useParams, useHistory } from "react-router-dom";
-import NewMenuChild from "./newMenuChild";
+import MenuChildForm from "./menuChildForm";
+import MenuForm from "./menuForm";
 
 const MenusTree = () => {
   const { app_id } = useParams();
@@ -22,15 +24,19 @@ const MenusTree = () => {
   const { isLoading, values, dragable } = menus;
   const [treeData, setTreeData] = useState([]);
 
+  const defaultMenu = menus?.values?.rows?.find(
+    ({ is_app_default }) => is_app_default
+  );
+
   useEffect(() => {
     dispatch(findAllChoices());
     dispatch(findAll(app_id));
-  }, []);
+  }, [dispatch, app_id]);
 
   const findNextState = (val) => {
     const state =
       values && values.rows && values.rows.length > 0
-        ? values.rows.find(({ state_id }) => state_id == val.ussd_new_state)
+        ? values.rows.find(({ state_id }) => +state_id === +val.ussd_new_state)
         : null;
     return state;
   };
@@ -55,13 +61,10 @@ const MenusTree = () => {
     if (title) {
       return (
         <div>
-          <span
-            onClick={() => handleShowDetails(val)}
-            className="d-inline-block pr-3 hover-icon"
-          >
+          <span onClick={() => handleShowDetails(val)} className="gwiza-mr-3">
             {title}
           </span>
-          <NewMenuChild state={val} />
+          <MenuChildForm Icon={PlusCircleOutlined} state={val} />
         </div>
       );
     }
@@ -91,10 +94,10 @@ const MenusTree = () => {
 
   useEffect(() => {
     const rows =
-      values && values.rows && values.rows.length > 0
-        ? values.rows
-            .filter((row) => row.state_id === 1)
-            .map((val) => {
+      values && values?.rows && values?.rows?.length > 0
+        ? values?.rows
+            ?.filter(({ is_app_default }) => is_app_default)
+            ?.map((val) => {
               const treeInfo = {
                 state_id: val.state_id,
                 expanded: true,
@@ -126,17 +129,44 @@ const MenusTree = () => {
 
   return (
     <Col span={10}>
-      <Card title="App Menus" loading={isLoading} bordered={false}>
-        <div style={{ minHeight: 500, overflowY: "hidden", overflowX: "auto" }}>
-          <SortableTree
-            treeData={treeData}
-            isVirtualized={false}
-            canDrag={dragable}
-            onMoveNode={onmoveNode}
-            theme={FileExplorerTheme}
-            onChange={(treeData) => handleChange(treeData)}
+      <Card
+        title="App Menus"
+        loading={isLoading}
+        bordered={false}
+        extra={[
+          <>
+            {!defaultMenu && (
+              <MenuForm
+                Icon={
+                  <Button type="primary">
+                    <PlusOutlined /> New Menu
+                  </Button>
+                }
+              />
+            )}
+          </>,
+        ]}
+      >
+        {!defaultMenu && (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={<p>Menus not found</p>}
           />
-        </div>
+        )}
+        {defaultMenu && (
+          <div
+            style={{ minHeight: 500, overflowY: "hidden", overflowX: "auto" }}
+          >
+            <SortableTree
+              treeData={treeData}
+              isVirtualized={false}
+              canDrag={dragable}
+              onMoveNode={onmoveNode}
+              theme={FileExplorerTheme}
+              onChange={(treeData) => handleChange(treeData)}
+            />
+          </div>
+        )}
       </Card>
     </Col>
   );

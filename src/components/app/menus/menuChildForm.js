@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Drawer, Form, Button, Col, Row, Input, Select, message } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createMenuChild } from "../../../redux/actions/menusActions";
 import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const NewMenuChild = ({ state }) => {
-  const { app_id } = useParams();
-  const [visible, setVisible] = useState(false);
-
+const MenuChildForm = ({ state, Icon, editable }) => {
   const dispatch = useDispatch();
+  const { app_id } = useParams();
+  const [form] = Form.useForm();
+  const [visible, setVisible] = useState(false);
+  const btnLoading = useSelector((state) => state?.menus?.btnLoading);
 
   const showDrawer = () => setVisible(true);
 
@@ -23,21 +23,32 @@ const NewMenuChild = ({ state }) => {
       ? state?.ussd_new_state
       : state?.state_id.toString();
     values.app_id = app_id;
-    console.log("values", values);
     dispatch(createMenuChild(values));
   };
 
-  const onFinishFailed = (values) => {
+  useEffect(() => {
+    if (editable) {
+      form.setFieldsValue({
+        ...state,
+      });
+    }
+  }, [form, state, editable]);
+
+  useEffect(() => {
+    if (!btnLoading) {
+      onClose();
+    }
+  }, [btnLoading]);
+
+  const onFinishFailed = () => {
     message.error("There are errors in your form");
   };
 
-  console.log(state);
-
   return (
     <>
-      <PlusCircleOutlined onClick={showDrawer} />
+      <Icon onClick={showDrawer} />
       <Drawer
-        title={`Create Sub-menu of ${state?.state_title}`}
+        title={`Sub-menu of ${state?.state_title}`}
         width={720}
         onClose={onClose}
         visible={visible}
@@ -63,12 +74,10 @@ const NewMenuChild = ({ state }) => {
         }
       >
         <Form
+          form={form}
           id="submenuForm"
           layout="vertical"
           onFinish={onFinish}
-          initialValues={{
-            app_id: state?.app_id,
-          }}
           onFinishFailed={onFinishFailed}
           hideRequiredMark
         >
@@ -396,4 +405,4 @@ const NewMenuChild = ({ state }) => {
     </>
   );
 };
-export default NewMenuChild;
+export default MenuChildForm;

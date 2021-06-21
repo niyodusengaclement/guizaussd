@@ -1,8 +1,25 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from "react";
-import { Table, Badge, Button, Input, Space } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Badge,
+  Button,
+  Input,
+  Space,
+  Dropdown,
+  Menu,
+  Popconfirm,
+  Col,
+  Row,
+} from "antd";
+import {
+  EllipsisOutlined,
+  SearchOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -12,9 +29,13 @@ import NewApp from "./newApp";
 
 const AppsTable = () => {
   const dispatch = useDispatch();
-  const response = useSelector((state) => state?.app?.allApps);
-  const newAppResponse = useSelector((state) => state?.app?.newApp);
+  const appResponse = useSelector((state) => state?.app);
+  const response = appResponse?.allApps;
+  const newAppResponse = appResponse?.newApp;
   const [searchText, setSearchText] = useState("");
+  const [details, setDetails] = useState({});
+  const [editable, setEditable] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const apps = response?.data?.data || [];
   const newApp = newAppResponse?.data?.data || {};
@@ -26,7 +47,27 @@ const AppsTable = () => {
   useEffect(() => {
     setSearchText("");
     dispatch(sharedAction("get", "/apps", types.GET_ALL_APPLICATIONS));
-  }, []);
+  }, [dispatch]);
+
+  const showDrawer = () => setVisible(true);
+  const closeDrawer = () => setVisible(false);
+
+  const newAppHandler = () => {
+    showDrawer();
+    setEditable(false);
+    setDetails({});
+  };
+
+  const editAppHandler = () => {
+    showDrawer();
+    setEditable(true);
+  };
+
+  const deleteHandler = () => {
+    dispatch(
+      sharedAction("delete", `/apps/${details?.app_id}`, types.DELETE_APP)
+    );
+  };
 
   const handleSearch = (selectedKey) => setSearchText(selectedKey);
 
@@ -64,6 +105,29 @@ const AppsTable = () => {
       />
     ),
   });
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <div onClick={() => editAppHandler()}>
+          <EditOutlined />
+          Edit
+        </div>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="1" danger>
+        <Popconfirm
+          title="Are you sure, you want to delete?"
+          onConfirm={deleteHandler}
+          okText="Yes"
+          cancelText="No"
+        >
+          <DeleteOutlined />
+          Delete
+        </Popconfirm>
+      </Menu.Item>
+    </Menu>
+  );
 
   const columns = [
     {
@@ -105,31 +169,6 @@ const AppsTable = () => {
       responsive: ["xl"],
     },
     {
-      title: "External Routing",
-      dataIndex: "external_routing",
-      key: "external_routing",
-      responsive: ["xl"],
-      render: (text) => (+text === 1 ? "true" : "false"),
-    },
-    {
-      title: "Routing URL",
-      dataIndex: "routing_url",
-      key: "routing_url",
-      responsive: ["xl"],
-    },
-    {
-      title: "Format",
-      dataIndex: "request_format",
-      key: "request_format",
-      responsive: ["lg"],
-    },
-    {
-      title: "Class",
-      dataIndex: "class_name",
-      key: "class_name",
-      responsive: ["xl"],
-    },
-    {
       title: "Status",
       dataIndex: "app_status",
       key: "app_status",
@@ -148,11 +187,40 @@ const AppsTable = () => {
         </span>
       ),
     },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      render: (text, record) => (
+        <Dropdown
+          onClick={() => setDetails(record)}
+          overlay={menu}
+          trigger={["click"]}
+        >
+          <EllipsisOutlined />
+        </Dropdown>
+      ),
+    },
   ];
 
   return (
     <Table
-      title={() => <NewApp />}
+      title={() => (
+        <Row gutter={16}>
+          <Col sm={{ span: 1 }} lg={{ span: 1 }}>
+            <Button type="primary" onClick={() => newAppHandler()}>
+              <PlusOutlined /> New App
+            </Button>
+            <NewApp
+              details={details}
+              editable={editable}
+              showDrawer={showDrawer}
+              closeDrawer={closeDrawer}
+              visible={visible}
+            />
+          </Col>
+        </Row>
+      )}
       loading={response?.isLoading}
       columns={columns}
       dataSource={dataSource}

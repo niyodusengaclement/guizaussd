@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./views/Login";
-import Register from "./views/Register";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "antd/dist/antd.css";
 import Dashboard from "./views/Dashboard";
@@ -32,7 +31,15 @@ const Routes = () => {
                 </AuthLayout>
               )}
             />
-            <Route path="/register" component={Register} />
+            <Route
+              exact
+              path="/login"
+              render={() => (
+                <AuthLayout>
+                  <Login />
+                </AuthLayout>
+              )}
+            />
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
             <PrivateRoute exact path="/menus" component={Menus} />
             <PrivateRoute exact path="/apps" component={AllApps} />

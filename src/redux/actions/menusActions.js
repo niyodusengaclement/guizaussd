@@ -14,7 +14,7 @@ import {
 export const createMenu = (data) => async (dispatch) => {
   try {
     dispatch(creator(CREATE_MENU_START, true));
-    const response = await HttpRequest.post("/menus", data);
+    const response = await HttpRequest.post(`/menus/${data?.app_id}`, data);
     message.success(response.message);
     const res = await HttpRequest.get(`/menus`);
     dispatch(creator(GET_MENUS_SUCCESS, res.data));
@@ -66,10 +66,10 @@ export const findAll = (app_id) => async (dispatch) => {
   }
 };
 
-export const updateMenu = (data, state_id) => async (dispatch) => {
+export const updateMenu = (data, app_id, state_id) => async (dispatch) => {
   try {
     dispatch(creator(CREATE_MENU_START));
-    const res = await HttpRequest.put(`/menus/${state_id}`, data);
+    const res = await HttpRequest.put(`/menus/${app_id}/${state_id}`, data);
     message.success(res.message);
     dispatch(creator(UPDATE_MENU_SUCCESS, res.data));
   } catch (e) {

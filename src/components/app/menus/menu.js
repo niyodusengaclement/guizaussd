@@ -12,7 +12,6 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { ListGroup } from "react-bootstrap";
 import {
   EllipsisOutlined,
   DeleteOutlined,
@@ -20,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import { deleteChoice } from "../../../redux/actions/choicesActions";
 import { deleteMenu } from "../../../redux/actions/menusActions";
+import MenuForm from "./menuForm";
 
 const MenuDetails = () => {
   const { app_id, menu_id } = useParams();
@@ -27,7 +27,7 @@ const MenuDetails = () => {
   const dispatch = useDispatch();
 
   const { isLoading, values } = menus;
-  const details = values?.rows?.find(({ state_id }) => state_id == menu_id);
+  const details = values?.rows?.find(({ state_id }) => +state_id === +menu_id);
 
   const deleteHandler = () => {
     if (!details?.state_id) {
@@ -39,11 +39,19 @@ const MenuDetails = () => {
   const menu = (
     <Menu>
       <Menu.Item key="0">
-        <EditOutlined />
-        <a href="#">Edit</a>
+        <MenuForm
+          Icon={
+            <>
+              <EditOutlined />
+              Edit
+            </>
+          }
+          editable
+          state={details}
+        />
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="3" danger>
+      <Menu.Item key="1" danger>
         <Popconfirm
           title="Are you sure, you want to delete?"
           onConfirm={deleteHandler}
@@ -66,11 +74,13 @@ const MenuDetails = () => {
                 <Col sm={{ span: 20 }} lg={{ span: 22 }}>
                   Menu details
                 </Col>
-                <Col sm={{ span: 4 }} lg={{ span: 2 }}>
-                  <Dropdown overlay={menu} trigger={["click"]}>
-                    <EllipsisOutlined />
-                  </Dropdown>
-                </Col>
+                {details && (
+                  <Col sm={{ span: 4 }} lg={{ span: 2 }}>
+                    <Dropdown overlay={menu} trigger={["click"]}>
+                      <EllipsisOutlined />
+                    </Dropdown>
+                  </Col>
+                )}
               </Row>
             }
             loading={isLoading}
