@@ -141,18 +141,20 @@ const MenuDetails = () => {
                   <Descriptions.Item label="Input type">
                     {details.input_type}
                   </Descriptions.Item>
+
+                  <Descriptions.Item label="Choices">
+                    {details.input_type}
+                  </Descriptions.Item>
                 </Descriptions>
                 Choices
-                <ListGroup>
-                  {details.choices.length > 0 &&
-                    details.choices.map(
-                      ({ ussd_name, ussd_choice, record_id }) => (
-                        <ListGroup.Item key={record_id}>
-                          {ussd_choice}. {ussd_name}
-                        </ListGroup.Item>
-                      )
-                    )}
-                </ListGroup>
+                {details.choices.length > 0 &&
+                  details.choices.map(
+                    ({ ussd_name, ussd_choice, record_id }) => (
+                      <p key={record_id}>
+                        {ussd_choice}. {ussd_name}
+                      </p>
+                    )
+                  )}
               </div>
             )}
           </Card>

@@ -26,3 +26,15 @@
 .site-layout-background {
   background: #fff;
 }
+.auth-container {
+  padding: 0 50px;
+  height: 100vh;
+  display: grid;
+  background-color: #011834;
+  place-items: center;
+}
+.auth-card {
+  height: fit-content;
+  width: 300px;
+  border-radius: 5px;
+}

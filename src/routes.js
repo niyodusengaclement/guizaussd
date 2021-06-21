@@ -13,6 +13,7 @@ import "react-sortable-tree/style.css";
 import PrivateRoute from "./utils/PrivateRoute";
 import Notfound from "./views/Notfound";
 import AllApps from "./views/AllApps";
+import AuthLayout from "./components/container/AuthLayout";
 
 toast.configure();
 
@@ -22,8 +23,15 @@ const Routes = () => {
       <Suspense fallback="loading">
         <BrowserRouter>
           <Switch>
-            <Route exact path="/" component={Login} />
-            <Route exact path="/login" component={Login} />
+            <Route
+              exact
+              path="/"
+              render={() => (
+                <AuthLayout>
+                  <Login />
+                </AuthLayout>
+              )}
+            />
             <Route path="/register" component={Register} />
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
             <PrivateRoute exact path="/menus" component={Menus} />
