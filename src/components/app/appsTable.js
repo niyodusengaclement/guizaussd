@@ -19,8 +19,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import * as types from "../../redux/types";
@@ -36,6 +36,7 @@ const AppsTable = () => {
   const [details, setDetails] = useState({});
   const [editable, setEditable] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [titleType, setTitleType] = useState("normal");
 
   const apps = response?.data?.data || [];
   const newApp = newAppResponse?.data?.data || {};
@@ -70,41 +71,10 @@ const AppsTable = () => {
   };
 
   const handleSearch = (selectedKey) => setSearchText(selectedKey);
-
-  const getColumnSearchProps = () => ({
-    filterDropdown: ({ confirm }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          placeholder="Search"
-          value={searchText}
-          onChange={(e) => handleSearch(e.target.value)}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            onClick={() => {
-              confirm();
-              setSearchText("");
-            }}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: () => <SearchOutlined />,
-    render: (text) => (
-      <Highlighter
-        highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-        searchWords={[searchText]}
-        autoEscape
-        // eslint-disable-next-line react/destructuring-assignment
-        textToHighlight={text?.toString()}
-      />
-    ),
-  });
+  const titleHandler = (type) => {
+    setSearchText("");
+    setTitleType(type);
+  };
 
   const menu = (
     <Menu>
@@ -129,12 +99,28 @@ const AppsTable = () => {
     </Menu>
   );
 
+  const Title =
+    titleType === "normal" ? (
+      <div className="col-title">
+        <div>App Name</div>
+        <div className="gwiza-mt-2 pointer">
+          <SearchOutlined onClick={() => titleHandler("search")} />
+        </div>
+      </div>
+    ) : (
+      <Input
+        prefix={<ArrowLeftOutlined onClick={() => titleHandler("normal")} />}
+        placeholder="Search"
+        allowClear
+        value={searchText}
+        onChange={(e) => handleSearch(e.target.value)}
+      />
+    );
   const columns = [
     {
-      title: "App Name",
+      title: () => Title,
       dataIndex: "app_name",
       key: "app_name",
-      ...getColumnSearchProps(),
       render: (text, record) => (
         <Link to={"/apps/" + record.app_id}>{text}</Link>
       ),
