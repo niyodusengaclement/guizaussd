@@ -7,7 +7,11 @@ import creator from "./creator";
 export const sharedAction =
   (method, endpoint, actionType, data) => async (dispatch) => {
     try {
-      const baseUrl = "http://localhost:5000/api";
+      const baseUrl =
+        process.env.NODE_ENV === "production"
+          ? process.env.REACT_APP_PROD_BASE_URL
+          : process.env.REACT_APP_DEV_BASE_URL;
+
       axios.defaults.headers["x-auth-token"] = AuthToken.getToken();
       dispatch(creator(actionType, { isLoading: true }));
       const res = await axios[method](baseUrl + endpoint, data);
