@@ -1,16 +1,11 @@
-import { difference } from "lodash";
-export const findDifference = (a, b) => {
-  let changes = [];
-  const items = difference(a, b);
+import JwtDecode from "jwt-decode";
+import AuthToken from "./authToken";
 
-  const handleDifference = (iteratee) => {
-    for (const item of items) {
-      if (iteratee.state_id === item.state_id) {
-        return changes.push(iteratee);
-      };
-    }
-  };
-
-  for (const iterator of b) handleDifference(iterator);
-  return changes;
+export const getLoggedUserInfo = () => {
+  const token = AuthToken.getToken();
+  if (!token) {
+    return window.location.assign("/login");
+  }
+  const user = JwtDecode(token);
+  return user;
 };

@@ -1,3 +1,18 @@
+.gwiza--header{
+  position: sticky;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 999;
+}
+.gwiza--menu{
+  position: relative !important;
+}
+.gwiza--user{
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+}
 .close-icon :hover {
   color: rgb(175, 13, 13);
   cursor: pointer;
@@ -40,4 +55,17 @@
 }
 .gwiza-mr-3 {
   margin-right: 3px;
+}
+.gwiza-mt-3 {
+  margin-top: 3px;
+}
+.gwiza-mt-2 {
+  margin-top: 2px;
+}
+.pointer {
+  cursor: pointer;
+}
+.col-title {
+  display: flex;
+  justify-content: space-between;
 }
